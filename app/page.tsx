@@ -1,34 +1,30 @@
+import CreateEvent from "./CreateEvent";
 import Event from "./event";
 
-export default function Home() {
-  return (
-    <main className="grid grid-cols-4 gap-4">
-      <Event
-        title="Event title"
-        description="Some ver long but unfruitful description"
-      />
-      <Event
-        title="Event title"
-        description="Some ver long but unfruitful description"
-      />
-      <Event
-        title="Event title"
-        description="Some ver long but unfruitful description"
-      />
-      <Event
-        title="Event title"
-        description="Some ver long but unfruitful description"
-      />
-      <Event
-        title="Event title"
-        description="Some ver long but unfruitful description"
-      />
-    </main>
-  );
+type EventDTO = {
+  uid: string
+  description: string
 }
 
-export async function getData() {
-  const res = await fetch("https://localhost:8081/events");
+function getEvents(): Promise<EventDTO[]> {
+  return new Promise<EventDTO[]>(async (resolve, reject) => {
+    try {
+      const res = await fetch("http://localhost:8080/events", { cache: 'no-cache' });
 
-  return res.json();
+      resolve(res.json())
+    } catch(e) {
+      reject()
+    }
+  })
+}
+
+export default async function Home() {
+  const events = await getEvents()
+
+  return (
+    <main className="grow grid grid-cols-4 gap-4 auto-rows-min p-8">
+      {events.map(({uid, description}) => <Event key={`event-${uid}`} title={uid} description={description} />)}
+      <CreateEvent />
+    </main>
+  );
 }
