@@ -8,7 +8,7 @@ export default function CreateEvent() {
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault()
 
-    await fetch("http://localhost:8080/events", { method: 'POST', headers: { "Content-Type": "application/json" }, body: JSON.stringify({title, description}) })
+    await fetch("/api/events", { method: 'POST', headers: { "Content-Type": "application/json" }, body: JSON.stringify({uid: title, description}) })
   }
 
   return (
