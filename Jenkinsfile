@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        echo 'My first pipeline build'
+        sh 'docker build -t nuno3nes/event-planner-ui:0.0.1 --target runner .'
       }
     }
   }
