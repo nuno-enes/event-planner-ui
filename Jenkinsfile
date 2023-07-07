@@ -10,11 +10,18 @@ pipeline {
 
     stage('Publish') {
       when {
-        branch 'develop'
+        branch 'main'
       }
       steps {
         sh 'docker login --username nuno3nes --password dckr_pat_cO6Tpe6Q1Cc2X0yQYVFmjvW1QSs'
-        sh 'docker image push nuno3nes/event-planner-ui:0.0.1'
+
+        script {
+          def packageJson = readJSON file: 'package.json'
+          def newVersion = packageJson['version']
+
+          sh "docker image push nuno3nes/event-planner-ui:${newVersion}"
+        }
+
         sh 'docker logout'
       }
     }
