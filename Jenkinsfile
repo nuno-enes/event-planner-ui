@@ -1,10 +1,14 @@
 pipeline {
   agent any
 
+  environment {
+    DOCKER_HUB_CREDS = credentials('jenkins-docker-creds')
+  }
+
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t nuno3nes/event-planner-ui:0.0.1 --target runner .'
+        sh 'docker build -t nuno3nes/event-planner-ui:0.1.1 --target runner .'
       }
     }
 
@@ -12,17 +16,18 @@ pipeline {
       when {
         branch 'main'
       }
-      steps {
-        sh 'docker login --username nuno3nes --password dckr_pat_cO6Tpe6Q1Cc2X0yQYVFmjvW1QSs'
 
+      steps {
         script {
           def packageJson = readJSON file: 'package.json'
           def newVersion = packageJson['version']
 
-          sh "docker image push nuno3nes/event-planner-ui:${newVersion}"
-        }
+          sh 'echo $DOCKER_HUB_CREDS_PSW | docker login --username $DOCKER_HUB_CREDS_USR --password-stdin'
 
-        sh 'docker logout'
+          sh "docker image push nuno3nes/event-planner-ui:${newVersion}"
+
+          sh 'docker logout'
+        }
       }
     }
   }
